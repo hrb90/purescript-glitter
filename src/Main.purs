@@ -20,6 +20,7 @@ glit = flip glit' id
 glitM :: forall a s m. Generic a => StringLike s => Monad m => ParserT s m a -> s -> m (Either String a)
 glitM = flip glitM' id
 
+-- | Creates an interactive testing page for a `Parser String a` using `sparkle`/
 glitter :: forall a eff.                                
   Generic a => String                        
                  -> Parser String a
@@ -31,14 +32,14 @@ glitter :: forall a eff.
                          Unit
 glitter label = flip (glitter' label) id
 
--- | Like `glitter`, but takes an extra argument transforming the parser output.
+-- | Like `glit`, but takes an extra argument transforming the parser output.
 glit' :: forall a b. Generic b => Parser String a -> (a -> b) -> String -> Either String b
 glit' parser evaluate = parser
                             # map evaluate
                             # flip runParser
                             # (map) (lmap parseErrorMessage)
 
--- | Like `glitterM`, but takes an extra argument transforming the parser output.
+-- | Like `glitM`, but takes an extra argument transforming the parser output.
 glitM' :: forall a b s m. Generic b => StringLike s => Monad m => ParserT s m a -> (a -> b) -> s -> m (Either String b)
 glitM' parser evaluate = parser
                             # map evaluate
@@ -46,6 +47,7 @@ glitM' parser evaluate = parser
                             # (map <<< map) (lmap parseErrorMessage)
 
 
+-- | Like `glitter`, but takes an extra argument transforming the parser output.
 glitter' :: forall a b eff.                             
   Generic b => String                         
                  -> Parser String a 
